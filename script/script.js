@@ -40,32 +40,38 @@ function tweetFunction(e) {
         let tweet = document.querySelector('#tweet').value;
         document.querySelector('#tweet').value = "";
     
-        // creating a remove button
-        let removeBtn = document.createElement('a');
-        removeBtn.classList = "remove-btn";
-        removeBtn.textContent = "X";
-    
-        // create element li
-        let li = document.createElement('li');
-        li.classList = "list-item w-75";
-        li.textContent = tweet;
-    
-        // append remove button to li
-        li.appendChild(removeBtn);
-    
-        //appending li to list
-        tweetList.appendChild(li);
-    
-        // get tweets into localstorage
-        addTweetsLs(tweet);
+    	if (tweet !== "") {
+			// creating a remove button
+			let removeBtn = document.createElement('a');
+			removeBtn.classList = "remove-btn";
+			removeBtn.textContent = "X";
+
+			// create element li
+			let li = document.createElement('li');
+			li.classList = "list-item w-75";
+			li.textContent = tweet;
+
+			// append remove button to li
+			li.appendChild(removeBtn);
+
+			//appending li to list
+			tweetList.appendChild(li);
+
+			// get tweets into localstorage
+        	addTweetsLs(tweet);
+    	}
     }
 
 // removing tweet
 
 function removeTweet(i) {
+	// tweet remove button for the page
     if (i.target.classList.contains('remove-btn')) {
         i.target.parentElement.remove();
     }
+
+    // remove tweet from the localstotage
+    removeTweetfromLs(i.target.parentElement.textContent);
 }
 
 
@@ -122,12 +128,33 @@ function loadTweetsOnPage() {
 }
 
 
+// remove tweets from the local storage...
+
+function removeTweetfromLs(tweet) {
+	let tweets = getTweetsLs();
+
+	// taking the tweet except 'X' by using list method
+	const tweetDelete = tweet.substring(0 , tweet.length-1);
+
+	// looping through the tweets array
+	tweets.forEach((tweetLs , index) => {
+		if (tweetDelete === tweetLs) {
+			tweets.splice(index , 1);
+		}
+	});
+
+	localStorage.setItem('tweets', JSON.stringify(tweets));
+}
+
 // deletes all tweets from the local storage...
 
 function deleteFunction() {
-    localStorage.clear();
+	let tweets;
+    tweets = getTweetsLs();
+    tweets = tweets.filter((tweet)=>{
+    	return tweet.length == 0;
+    })
+
+    localStorage.setItem('tweets' , JSON.stringify(tweets));
 }
-
-
-
 
